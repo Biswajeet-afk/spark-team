@@ -15,6 +15,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppPProjectIdRouteImport } from './routes/_authenticated/app.p.$projectId'
+import { Route as AuthenticatedAppPProjectIdIndexRouteImport } from './routes/_authenticated/app.p.$projectId.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +48,18 @@ const AuthenticatedAppSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppPProjectIdRoute =
+  AuthenticatedAppPProjectIdRouteImport.update({
+    id: '/p/$projectId',
+    path: '/p/$projectId',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppPProjectIdIndexRoute =
+  AuthenticatedAppPProjectIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,12 +67,15 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
+  '/app/p/$projectId/': typeof AuthenticatedAppPProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/p/$projectId': typeof AuthenticatedAppPProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +85,21 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
+  '/_authenticated/app/p/$projectId/': typeof AuthenticatedAppPProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/app' | '/app/settings' | '/app/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/app'
+    | '/app/settings'
+    | '/app/'
+    | '/app/p/$projectId'
+    | '/app/p/$projectId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/settings' | '/app'
+  to: '/' | '/auth' | '/app/settings' | '/app' | '/app/p/$projectId'
   id:
     | '__root__'
     | '/'
@@ -82,6 +108,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/'
+    | '/_authenticated/app/p/$projectId'
+    | '/_authenticated/app/p/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,17 +162,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/p/$projectId': {
+      id: '/_authenticated/app/p/$projectId'
+      path: '/p/$projectId'
+      fullPath: '/app/p/$projectId'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/p/$projectId/': {
+      id: '/_authenticated/app/p/$projectId/'
+      path: '/'
+      fullPath: '/app/p/$projectId/'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
   }
 }
+
+interface AuthenticatedAppPProjectIdRouteChildren {
+  AuthenticatedAppPProjectIdIndexRoute: typeof AuthenticatedAppPProjectIdIndexRoute
+}
+
+const AuthenticatedAppPProjectIdRouteChildren: AuthenticatedAppPProjectIdRouteChildren =
+  {
+    AuthenticatedAppPProjectIdIndexRoute: AuthenticatedAppPProjectIdIndexRoute,
+  }
+
+const AuthenticatedAppPProjectIdRouteWithChildren =
+  AuthenticatedAppPProjectIdRoute._addFileChildren(
+    AuthenticatedAppPProjectIdRouteChildren,
+  )
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppPProjectIdRoute: typeof AuthenticatedAppPProjectIdRouteWithChildren
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppPProjectIdRoute: AuthenticatedAppPProjectIdRouteWithChildren,
 }
 
 const AuthenticatedAppRouteWithChildren =
