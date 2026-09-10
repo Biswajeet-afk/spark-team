@@ -72,9 +72,7 @@ function Landing() {
                   <Link to="/auth">Sign in</Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link to="/auth" search={{ mode: "signup" }}>
-                    Create account
-                  </Link>
+                  <Link to="/auth">Create account</Link>
                 </Button>
               </>
             )}
@@ -97,7 +95,7 @@ function Landing() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
-                <Link to={user ? "/app" : "/auth"} search={user ? undefined : { mode: "signup" }}>
+                <Link to={user ? "/app" : "/auth"}>
                   {user ? "Open workspace" : "Start a team"}
                   <ArrowRight className="size-4" />
                 </Link>
