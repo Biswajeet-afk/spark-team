@@ -24,8 +24,10 @@ export const DISCIPLINES: { value: Discipline; label: string; short: string }[] 
   { value: "other", label: "Other", short: "GEN" },
 ];
 
+const FALLBACK_DISCIPLINE = { value: "other", label: "Other", short: "GEN" } as const;
+
 export function disciplineMeta(value: Discipline | null | undefined) {
-  return DISCIPLINES.find((d) => d.value === value) ?? DISCIPLINES[5];
+  return DISCIPLINES.find((d) => d.value === value) ?? FALLBACK_DISCIPLINE;
 }
 
 export const TASK_COLUMNS: { status: TaskStatus; label: string }[] = [

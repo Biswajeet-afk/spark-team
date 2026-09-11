@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "./domain";
+import type { Channel, Profile, Project } from "./domain";
 
 function unwrap<T>({ data, error }: { data: T | null; error: { message: string } | null }): T {
   if (error) throw new Error(error.message);
@@ -51,14 +51,14 @@ export const projectsQuery = queryOptions({
 export const projectQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["project", projectId],
-    queryFn: async () =>
+    queryFn: async (): Promise<Project> =>
       unwrap(await supabase.from("projects").select("*").eq("id", projectId).single()),
   });
 
 export const channelsQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["channels", projectId],
-    queryFn: async () =>
+    queryFn: async (): Promise<Channel[]> =>
       unwrap(
         await supabase
           .from("channels")
