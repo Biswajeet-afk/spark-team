@@ -99,6 +99,41 @@ export const messagesQuery = (channelId: string) =>
       ),
   });
 
+export const messageAttachmentsQuery = (channelId: string) =>
+  queryOptions({
+    queryKey: ["message-attachments", channelId],
+    queryFn: async () => {
+      const attachments = unwrap(
+        await supabase
+          .from("message_attachments")
+          .select("*")
+          .eq("channel_id", channelId)
+          .order("created_at", { ascending: true }),
+      );
+      return Promise.all(
+        attachments.map(async (attachment) => {
+          const { data } = await supabase.storage
+            .from("project-chat")
+            .createSignedUrl(attachment.storage_path, 3600);
+          return { ...attachment, url: data?.signedUrl ?? null };
+        }),
+      );
+    },
+  });
+
+export const messageReactionsQuery = (channelId: string) =>
+  queryOptions({
+    queryKey: ["message-reactions", channelId],
+    queryFn: async () =>
+      unwrap(
+        await supabase
+          .from("message_reactions")
+          .select("*")
+          .eq("channel_id", channelId)
+          .order("created_at", { ascending: true }),
+      ),
+  });
+
 export const tasksQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["tasks", projectId],

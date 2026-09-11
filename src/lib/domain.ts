@@ -12,6 +12,8 @@ export type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export type Milestone = Database["public"]["Tables"]["milestones"]["Row"];
 export type Deliverable = Database["public"]["Tables"]["deliverables"]["Row"];
 export type Member = Database["public"]["Tables"]["project_members"]["Row"];
+export type MessageAttachment = Database["public"]["Tables"]["message_attachments"]["Row"];
+export type MessageReaction = Database["public"]["Tables"]["message_reactions"]["Row"];
 
 export const DISCIPLINES: { value: Discipline; label: string; short: string }[] = [
   { value: "engineering", label: "Engineering", short: "ENG" },
@@ -23,7 +25,7 @@ export const DISCIPLINES: { value: Discipline; label: string; short: string }[] 
 ];
 
 export function disciplineMeta(value: Discipline | null | undefined) {
-  return DISCIPLINES.find((d) => d.value === value) ?? DISCIPLINES[5]!;
+  return DISCIPLINES.find((d) => d.value === value) ?? DISCIPLINES[5];
 }
 
 export const TASK_COLUMNS: { status: TaskStatus; label: string }[] = [
@@ -44,7 +46,7 @@ export function initials(name: string | null | undefined, fallback = "?") {
   const clean = (name ?? "").trim();
   if (!clean) return fallback;
   const parts = clean.split(/\s+/).slice(0, 2);
-  return parts.map((p) => p[0]!.toUpperCase()).join("");
+  return parts.map((p) => p.charAt(0).toUpperCase()).join("");
 }
 
 export function displayName(profile: Pick<Profile, "full_name" | "email"> | null | undefined) {
