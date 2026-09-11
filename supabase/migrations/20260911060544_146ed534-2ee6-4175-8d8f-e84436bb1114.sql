@@ -1,0 +1,10 @@
+REVOKE ALL ON FUNCTION public.is_project_member(uuid, uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_project_owner(uuid, uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_channel_member(uuid, uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_milestone_member(uuid, uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.shares_project(uuid, uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_project_owner(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_channel_member(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_milestone_member(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.shares_project(uuid, uuid) TO authenticated, service_role;

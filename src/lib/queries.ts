@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "./domain";
+import type { Channel, Profile, Project } from "./domain";
 
 function unwrap<T>({ data, error }: { data: T | null; error: { message: string } | null }): T {
   if (error) throw new Error(error.message);
@@ -51,14 +51,14 @@ export const projectsQuery = queryOptions({
 export const projectQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["project", projectId],
-    queryFn: async () =>
+    queryFn: async (): Promise<Project> =>
       unwrap(await supabase.from("projects").select("*").eq("id", projectId).single()),
   });
 
 export const channelsQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["channels", projectId],
-    queryFn: async () =>
+    queryFn: async (): Promise<Channel[]> =>
       unwrap(
         await supabase
           .from("channels")
@@ -96,6 +96,41 @@ export const messagesQuery = (channelId: string) =>
           .eq("channel_id", channelId)
           .order("created_at", { ascending: true })
           .limit(300),
+      ),
+  });
+
+export const messageAttachmentsQuery = (channelId: string) =>
+  queryOptions({
+    queryKey: ["message-attachments", channelId],
+    queryFn: async () => {
+      const attachments = unwrap(
+        await supabase
+          .from("message_attachments")
+          .select("*")
+          .eq("channel_id", channelId)
+          .order("created_at", { ascending: true }),
+      );
+      return Promise.all(
+        attachments.map(async (attachment) => {
+          const { data } = await supabase.storage
+            .from("project-chat")
+            .createSignedUrl(attachment.storage_path, 3600);
+          return { ...attachment, url: data?.signedUrl ?? null };
+        }),
+      );
+    },
+  });
+
+export const messageReactionsQuery = (channelId: string) =>
+  queryOptions({
+    queryKey: ["message-reactions", channelId],
+    queryFn: async () =>
+      unwrap(
+        await supabase
+          .from("message_reactions")
+          .select("*")
+          .eq("channel_id", channelId)
+          .order("created_at", { ascending: true }),
       ),
   });
 
