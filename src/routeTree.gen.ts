@@ -17,6 +17,10 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppPProjectIdRouteImport } from './routes/_authenticated/app.p.$projectId'
 import { Route as AuthenticatedAppPProjectIdIndexRouteImport } from './routes/_authenticated/app.p.$projectId.index'
+import { Route as AuthenticatedAppPProjectIdBoardRouteImport } from './routes/_authenticated/app.p.$projectId.board'
+import { Route as AuthenticatedAppPProjectIdMilestonesRouteImport } from './routes/_authenticated/app.p.$projectId.milestones'
+import { Route as AuthenticatedAppPProjectIdTeamRouteImport } from './routes/_authenticated/app.p.$projectId.team'
+import { Route as AuthenticatedAppPProjectIdChatChannelIdRouteImport } from './routes/_authenticated/app.p.$projectId.chat.$channelId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -60,6 +64,30 @@ const AuthenticatedAppPProjectIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAppPProjectIdRoute,
   } as any)
+const AuthenticatedAppPProjectIdBoardRoute =
+  AuthenticatedAppPProjectIdBoardRouteImport.update({
+    id: '/board',
+    path: '/board',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
+const AuthenticatedAppPProjectIdMilestonesRoute =
+  AuthenticatedAppPProjectIdMilestonesRouteImport.update({
+    id: '/milestones',
+    path: '/milestones',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
+const AuthenticatedAppPProjectIdTeamRoute =
+  AuthenticatedAppPProjectIdTeamRouteImport.update({
+    id: '/team',
+    path: '/team',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
+const AuthenticatedAppPProjectIdChatChannelIdRoute =
+  AuthenticatedAppPProjectIdChatChannelIdRouteImport.update({
+    id: '/chat/$channelId',
+    path: '/chat/$channelId',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,14 +96,22 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
+  '/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
+  '/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
   '/app/p/$projectId/': typeof AuthenticatedAppPProjectIdIndexRoute
+  '/app/p/$projectId/chat/$channelId': typeof AuthenticatedAppPProjectIdChatChannelIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
+  '/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
   '/app/p/$projectId': typeof AuthenticatedAppPProjectIdIndexRoute
+  '/app/p/$projectId/chat/$channelId': typeof AuthenticatedAppPProjectIdChatChannelIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,7 +122,11 @@ export interface FileRoutesById {
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
+  '/_authenticated/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/_authenticated/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
+  '/_authenticated/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
   '/_authenticated/app/p/$projectId/': typeof AuthenticatedAppPProjectIdIndexRoute
+  '/_authenticated/app/p/$projectId/chat/$channelId': typeof AuthenticatedAppPProjectIdChatChannelIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -97,9 +137,22 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/'
     | '/app/p/$projectId'
+    | '/app/p/$projectId/board'
+    | '/app/p/$projectId/milestones'
+    | '/app/p/$projectId/team'
     | '/app/p/$projectId/'
+    | '/app/p/$projectId/chat/$channelId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/settings' | '/app' | '/app/p/$projectId'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/settings'
+    | '/app'
+    | '/app/p/$projectId/board'
+    | '/app/p/$projectId/milestones'
+    | '/app/p/$projectId/team'
+    | '/app/p/$projectId'
+    | '/app/p/$projectId/chat/$channelId'
   id:
     | '__root__'
     | '/'
@@ -109,7 +162,11 @@ export interface FileRouteTypes {
     | '/_authenticated/app/settings'
     | '/_authenticated/app/'
     | '/_authenticated/app/p/$projectId'
+    | '/_authenticated/app/p/$projectId/board'
+    | '/_authenticated/app/p/$projectId/milestones'
+    | '/_authenticated/app/p/$projectId/team'
     | '/_authenticated/app/p/$projectId/'
+    | '/_authenticated/app/p/$projectId/chat/$channelId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,16 +233,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPProjectIdIndexRouteImport
       parentRoute: typeof AuthenticatedAppPProjectIdRoute
     }
+    '/_authenticated/app/p/$projectId/board': {
+      id: '/_authenticated/app/p/$projectId/board'
+      path: '/board'
+      fullPath: '/app/p/$projectId/board'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdBoardRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
+    '/_authenticated/app/p/$projectId/milestones': {
+      id: '/_authenticated/app/p/$projectId/milestones'
+      path: '/milestones'
+      fullPath: '/app/p/$projectId/milestones'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdMilestonesRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
+    '/_authenticated/app/p/$projectId/team': {
+      id: '/_authenticated/app/p/$projectId/team'
+      path: '/team'
+      fullPath: '/app/p/$projectId/team'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdTeamRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
+    '/_authenticated/app/p/$projectId/chat/$channelId': {
+      id: '/_authenticated/app/p/$projectId/chat/$channelId'
+      path: '/chat/$channelId'
+      fullPath: '/app/p/$projectId/chat/$channelId'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdChatChannelIdRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
   }
 }
 
 interface AuthenticatedAppPProjectIdRouteChildren {
+  AuthenticatedAppPProjectIdBoardRoute: typeof AuthenticatedAppPProjectIdBoardRoute
+  AuthenticatedAppPProjectIdMilestonesRoute: typeof AuthenticatedAppPProjectIdMilestonesRoute
+  AuthenticatedAppPProjectIdTeamRoute: typeof AuthenticatedAppPProjectIdTeamRoute
   AuthenticatedAppPProjectIdIndexRoute: typeof AuthenticatedAppPProjectIdIndexRoute
+  AuthenticatedAppPProjectIdChatChannelIdRoute: typeof AuthenticatedAppPProjectIdChatChannelIdRoute
 }
 
 const AuthenticatedAppPProjectIdRouteChildren: AuthenticatedAppPProjectIdRouteChildren =
   {
+    AuthenticatedAppPProjectIdBoardRoute: AuthenticatedAppPProjectIdBoardRoute,
+    AuthenticatedAppPProjectIdMilestonesRoute:
+      AuthenticatedAppPProjectIdMilestonesRoute,
+    AuthenticatedAppPProjectIdTeamRoute: AuthenticatedAppPProjectIdTeamRoute,
     AuthenticatedAppPProjectIdIndexRoute: AuthenticatedAppPProjectIdIndexRoute,
+    AuthenticatedAppPProjectIdChatChannelIdRoute:
+      AuthenticatedAppPProjectIdChatChannelIdRoute,
   }
 
 const AuthenticatedAppPProjectIdRouteWithChildren =
