@@ -68,6 +68,13 @@ export const channelsQuery = (projectId: string) =>
       ),
   });
 
+export const channelQuery = (channelId: string) =>
+  queryOptions({
+    queryKey: ["channel", channelId],
+    queryFn: async (): Promise<Channel> =>
+      unwrap(await supabase.from("channels").select("*").eq("id", channelId).single()),
+  });
+
 export const membersQuery = (projectId: string) =>
   queryOptions({
     queryKey: ["members", projectId],
@@ -88,15 +95,24 @@ export const membersQuery = (projectId: string) =>
 export const messagesQuery = (channelId: string) =>
   queryOptions({
     queryKey: ["messages", channelId],
-    queryFn: async () =>
-      unwrap(
+    queryFn: async () => {
+      const messages = unwrap(
         await supabase
           .from("messages")
           .select("*")
           .eq("channel_id", channelId)
           .order("created_at", { ascending: true })
           .limit(300),
-      ),
+      );
+      const ids = Array.from(new Set(messages.map((m) => m.user_id)));
+      const profiles: Profile[] = ids.length
+        ? unwrap(await supabase.from("profiles").select("*").in("id", ids))
+        : [];
+      return messages.map((m) => ({
+        ...m,
+        profile: profiles.find((p) => p.id === m.user_id) ?? null,
+      }));
+    },
   });
 
 export const messageAttachmentsQuery = (channelId: string) =>

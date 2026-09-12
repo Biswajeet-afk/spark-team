@@ -27,6 +27,17 @@ import { MarkdownMessage } from "@/components/app/markdown-message";
 import { MemberAvatar } from "@/components/app/member-avatar";
 import { Button } from "@/components/ui/button";
 
+function groupBy<T, K>(items: T[], key: (item: T) => K): Map<K, T[]> {
+  const map = new Map<K, T[]>();
+  for (const item of items) {
+    const k = key(item);
+    const list = map.get(k);
+    if (list) list.push(item);
+    else map.set(k, [item]);
+  }
+  return map;
+}
+
 const EMOJIS = ["👍", "🎉", "❤️", "👀"];
 
 export const Route = createFileRoute("/_authenticated/app/p/$projectId/chat/$channelId")({
@@ -120,7 +131,7 @@ function ChatPage() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const attachmentsByMessage = useMemo(() => Map.groupBy(attachments, (item) => item.message_id), [attachments]);
+  const attachmentsByMessage = useMemo(() => groupBy(attachments, (item) => item.message_id), [attachments]);
 
   return (
     <main className="flex min-h-0 flex-1 flex-col">
@@ -135,7 +146,7 @@ function ChatPage() {
             const mine = message.user_id === auth?.id;
             const messageAttachments = attachmentsByMessage.get(message.id) ?? [];
             const messageReactions = reactions.filter((reaction) => reaction.message_id === message.id);
-            const grouped = Map.groupBy(messageReactions, (reaction) => reaction.emoji);
+            const grouped = groupBy(messageReactions, (reaction) => reaction.emoji);
             return (
               <Message key={message.id} from={mine ? "user" : "assistant"} className="group/message py-2">
                 {!mine ? <MemberAvatar profile={message.profile} className="mt-0.5 size-8" /> : null}
