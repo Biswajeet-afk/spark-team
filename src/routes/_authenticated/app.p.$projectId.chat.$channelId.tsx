@@ -104,7 +104,7 @@ function ChatPage() {
           uploader_id: auth.id,
           storage_path: path,
           file_name: safeName,
-          mime_type: item.mediaType ?? blob.type || "application/octet-stream",
+          mime_type: item.mediaType ?? (blob.type || "application/octet-stream"),
           file_size: blob.size,
         });
         if (record.error) throw record.error;
@@ -161,7 +161,7 @@ function ChatPage() {
                       <Attachments variant="list" className="mt-2">
                         {messageAttachments.map((item) => (
                           <a key={item.id} href={item.url ?? undefined} download={item.file_name} target="_blank" rel="noreferrer" className="w-full">
-                            <Attachment data={{ type: "file", filename: item.file_name, mediaType: item.mime_type, url: item.url ?? undefined }}>
+                            <Attachment data={{ type: "file", filename: item.file_name, mediaType: item.mime_type, url: item.url ?? "" }}>
                               <AttachmentPreview />
                               <AttachmentInfo showMediaType />
                               <Download className="size-4 text-muted-foreground" />
