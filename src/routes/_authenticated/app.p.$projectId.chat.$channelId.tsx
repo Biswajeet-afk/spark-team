@@ -161,7 +161,7 @@ function ChatPage() {
                       <Attachments variant="list" className="mt-2">
                         {messageAttachments.map((item) => (
                           <a key={item.id} href={item.url ?? undefined} download={item.file_name} target="_blank" rel="noreferrer" className="w-full">
-                            <Attachment data={{ type: "file", filename: item.file_name, mediaType: item.mime_type, url: item.url ?? "" }}>
+                            <Attachment data={{ id: item.id, type: "file", filename: item.file_name, mediaType: item.mime_type, url: item.url ?? "" }}>
                               <AttachmentPreview />
                               <AttachmentInfo showMediaType />
                               <Download className="size-4 text-muted-foreground" />
