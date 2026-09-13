@@ -18,6 +18,7 @@ import {
   PRIORITIES,
   TASK_COLUMNS,
   displayName,
+  type Profile,
   type Task,
   type TaskPriority,
   type TaskStatus,
@@ -77,7 +78,7 @@ function TaskCard({
   assignee,
 }: {
   task: Task;
-  assignee: { full_name: string | null; email: string | null; avatar_url: string | null } | null;
+  assignee: Profile | null;
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: task.id,
