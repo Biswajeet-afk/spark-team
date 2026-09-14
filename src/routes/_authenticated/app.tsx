@@ -114,7 +114,7 @@ function AppShell() {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <NotificationBanner permission={permission} onEnable={() => void requestPermission()} />
-          <div className="flex min-w-0 flex-1">
+          <div className="flex min-h-0 min-w-0 flex-1">
             <Outlet />
           </div>
         </div>
