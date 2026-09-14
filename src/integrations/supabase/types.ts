@@ -267,6 +267,7 @@ export type Database = {
           full_name: string
           id: string
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -277,6 +278,7 @@ export type Database = {
           full_name?: string
           id: string
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -287,6 +289,7 @@ export type Database = {
           full_name?: string
           id?: string
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -294,6 +297,7 @@ export type Database = {
         Row: {
           id: string
           joined_at: string
+          position: string | null
           project_id: string
           role: string
           user_id: string
@@ -301,6 +305,7 @@ export type Database = {
         Insert: {
           id?: string
           joined_at?: string
+          position?: string | null
           project_id: string
           role?: string
           user_id: string
@@ -308,6 +313,7 @@ export type Database = {
         Update: {
           id?: string
           joined_at?: string
+          position?: string | null
           project_id?: string
           role?: string
           user_id?: string
