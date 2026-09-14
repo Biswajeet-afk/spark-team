@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useMessageNotifications } from "@/hooks/use-message-notifications";
+import { NotificationBanner } from "@/components/app/notification-banner";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppShell,
@@ -24,7 +26,11 @@ export const Route = createFileRoute("/_authenticated/app")({
 function AppShell() {
   const { data: projects } = useQuery(projectsQuery);
   const { data: profile } = useQuery(myProfileQuery);
-  const params = useParams({ strict: false }) as { projectId?: string };
+  const params = useParams({ strict: false }) as { projectId?: string; channelId?: string };
+  const { permission, requestPermission } = useMessageNotifications({
+    userId: profile?.id,
+    activeChannelId: params.channelId,
+  });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -106,8 +112,11 @@ function AppShell() {
           </DropdownMenu>
         </nav>
 
-        <div className="flex min-w-0 flex-1">
-          <Outlet />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <NotificationBanner permission={permission} onEnable={() => void requestPermission()} />
+          <div className="flex min-w-0 flex-1">
+            <Outlet />
+          </div>
         </div>
       </div>
     </TooltipProvider>

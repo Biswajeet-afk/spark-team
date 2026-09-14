@@ -127,6 +127,28 @@ function ProfileSettings() {
             Save changes
           </Button>
         </div>
+
+        <div className="mt-10 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold">Notifications</h2>
+          <div className="mt-3 flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <Label htmlFor="sound" className="text-sm">
+                Message sound
+              </Label>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Play a short chime when a new message arrives while you are away.
+              </p>
+            </div>
+            <Switch
+              id="sound"
+              checked={sound}
+              onCheckedChange={(next) => {
+                setSound(next);
+                if (next) playMessageChime();
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
