@@ -67,7 +67,7 @@ function ProjectLayout() {
   ];
 
   return (
-    <div className="flex min-w-0 flex-1">
+    <div className="flex min-h-0 min-w-0 flex-1">
       <aside className="flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
         <div className="border-b border-sidebar-border px-4 py-3">
           <p className="truncate text-sm font-semibold tracking-tight">
@@ -162,7 +162,7 @@ function ProjectLayout() {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <Outlet />
       </div>
     </div>
