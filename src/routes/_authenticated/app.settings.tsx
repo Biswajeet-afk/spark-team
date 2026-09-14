@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { playMessageChime, useSoundEnabled } from "@/lib/notification-prefs";
 import { DISCIPLINES, type Discipline } from "@/lib/domain";
 import { MemberAvatar } from "@/components/app/member-avatar";
 import { DisciplineBadge } from "@/components/app/discipline-badge";
@@ -31,6 +33,7 @@ function ProfileSettings() {
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [discipline, setDiscipline] = useState<Discipline>("other");
+  const [sound, setSound] = useSoundEnabled();
 
   useEffect(() => {
     if (!profile) return;
