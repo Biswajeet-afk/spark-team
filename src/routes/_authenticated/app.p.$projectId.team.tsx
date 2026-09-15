@@ -46,11 +46,13 @@ const REASONS: Record<string, string> = {
 function TeamPage() {
   const { projectId } = Route.useParams();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data: project } = useQuery(projectQuery(projectId));
   const { data: members = [] } = useQuery(membersQuery(projectId));
   const { data: user } = useQuery(sessionUserQuery);
   const invite = useServerFn(addMemberByEmail);
   const [email, setEmail] = useState("");
+  const [roleDrafts, setRoleDrafts] = useState<Record<string, string>>({});
 
   const isOwner = !!project && !!user && project.owner_id === user.id;
 
