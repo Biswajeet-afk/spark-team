@@ -141,12 +141,12 @@ function ProjectLayout() {
             {(channels ?? []).map((channel) => {
               const active = routeParams.channelId === channel.id;
               return (
-                <li key={channel.id}>
+                <li key={channel.id} className="group/channel relative">
                   <Link
                     to="/app/p/$projectId/chat/$channelId"
                     params={{ projectId, channelId: channel.id }}
                     className={cn(
-                      "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+                      "flex items-center gap-1.5 rounded-md py-1.5 pr-7 pl-2 text-sm transition-colors",
                       active
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground",
@@ -155,6 +155,23 @@ function ProjectLayout() {
                     <Hash className="size-3.5 shrink-0" />
                     <span className="truncate">{channel.name}</span>
                   </Link>
+                  {isOwner ? (
+                    <button
+                      type="button"
+                      aria-label={`Delete channel ${channel.name}`}
+                      className="absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground opacity-0 transition-opacity group-hover/channel:opacity-100 hover:text-destructive"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Delete #${channel.name}? All its messages and files will be removed.`,
+                          )
+                        )
+                          deleteChannel.mutate(channel.id);
+                      }}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  ) : null}
                 </li>
               );
             })}
