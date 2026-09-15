@@ -7,6 +7,7 @@ import type { FileUIPart } from "ai";
 import { supabase } from "@/integrations/supabase/client";
 import {
   channelQuery,
+  membersQuery,
   messageAttachmentsQuery,
   messageReactionsQuery,
   messagesQuery,
