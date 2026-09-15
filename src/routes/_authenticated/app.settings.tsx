@@ -111,22 +111,67 @@ function ProfileSettings() {
 
         <div className="mt-8 flex items-center gap-4 rounded-xl border border-border bg-card p-4">
           <MemberAvatar
-            profile={{ full_name: fullName, email: profile?.email ?? null, avatar_url: avatarUrl }}
+            profile={{
+              full_name: fullName,
+              username,
+              email: profile?.email ?? null,
+              avatar_url: avatarUrl,
+            }}
             className="size-12"
           />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="truncate text-sm font-medium">{fullName || "Unnamed"}</span>
+              <span className="truncate text-sm font-medium">
+                {username.trim() || fullName || "Unnamed"}
+              </span>
               <DisciplineBadge discipline={discipline} />
             </div>
             <span className="block truncate text-xs text-muted-foreground">{profile?.email}</span>
+          </div>
+          <div>
+            <input
+              id="photo"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) uploadPhoto.mutate(file);
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploadPhoto.isPending}
+              onClick={() => document.getElementById("photo")?.click()}
+            >
+              {uploadPhoto.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
+              Upload photo
+            </Button>
           </div>
         </div>
 
         <div className="mt-6 space-y-5">
           <div className="space-y-1.5">
-            <Label htmlFor="name">Full name</Label>
+            <Label htmlFor="username">Username (shown to teammates)</Label>
+            <Input
+              id="username"
+              placeholder="codewizard"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              This is the name other members see next to your messages and tasks.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="name">Full name (private)</Label>
             <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <p className="text-xs text-muted-foreground">
+              Only project owners can see your real name on the Team page.
+            </p>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="discipline">Discipline</Label>
