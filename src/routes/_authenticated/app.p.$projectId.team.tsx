@@ -165,40 +165,108 @@ function TeamPage() {
       </section>
 
       <ul className="space-y-2">
-        {members.map((member) => (
-          <li
-            key={member.user_id}
-            className="flex items-center gap-3 rounded-xl border border-border bg-card/40 p-3"
-          >
-            <MemberAvatar profile={member.profile} className="size-9" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="truncate text-sm font-medium">{displayName(member.profile)}</p>
-                <DisciplineBadge discipline={member.profile?.discipline} />
-                {member.role === "owner" ? (
-                  <span className="rounded border border-border px-1.5 py-px font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
-                    owner
-                  </span>
-                ) : null}
+        {members.map((member) => {
+          const draft = roleDrafts[member.user_id] ?? member.position ?? "";
+          return (
+            <li
+              key={member.user_id}
+              className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/40 p-3"
+            >
+              <MemberAvatar profile={member.profile} className="size-9" />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate text-sm font-medium">{displayName(member.profile)}</p>
+                  <DisciplineBadge discipline={member.profile?.discipline} />
+                  {member.position ? (
+                    <span className="rounded border border-primary/40 bg-primary/10 px-1.5 py-px text-[10px] font-medium tracking-wide text-primary">
+                      {member.position}
+                    </span>
+                  ) : null}
+                  {member.role === "owner" ? (
+                    <span className="rounded border border-border px-1.5 py-px font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                      owner
+                    </span>
+                  ) : null}
+                </div>
+                <p className="truncate text-xs text-muted-foreground">
+                  {isOwner && realName(member.profile)
+                    ? realName(member.profile)
+                    : member.profile?.bio?.trim() ||
+                      "Joined " + new Date(member.joined_at).toLocaleDateString()}
+                </p>
               </div>
-              <p className="truncate text-xs text-muted-foreground">
-                {member.profile?.bio?.trim() || "Joined " + new Date(member.joined_at).toLocaleDateString()}
-              </p>
-            </div>
-            {isOwner && member.role !== "owner" ? (
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="ml-auto text-muted-foreground hover:text-destructive"
-                aria-label={`Remove ${displayName(member.profile)}`}
-                onClick={() => removeMember.mutate(member.user_id)}
-              >
-                <UserMinus className="size-4" />
-              </Button>
-            ) : null}
-          </li>
-        ))}
+
+              {isOwner ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    aria-label={`Role for ${displayName(member.profile)}`}
+                    placeholder="Role e.g. Frontend Lead"
+                    className="h-8 w-44"
+                    value={draft}
+                    onChange={(e) =>
+                      setRoleDrafts((prev) => ({ ...prev, [member.user_id]: e.target.value }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter")
+                        setRole.mutate({ userId: member.user_id, position: draft });
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={draft.trim() === (member.position ?? "").trim() || setRole.isPending}
+                    onClick={() => setRole.mutate({ userId: member.user_id, position: draft })}
+                  >
+                    Save
+                  </Button>
+                  {member.role !== "owner" ? (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Remove ${displayName(member.profile)}`}
+                      onClick={() => removeMember.mutate(member.user_id)}
+                    >
+                      <UserMinus className="size-4" />
+                    </Button>
+                  ) : null}
+                </div>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
+
+      {isOwner ? (
+        <section className="mt-8 rounded-xl border border-destructive/40 bg-destructive/5 p-4">
+          <h2 className="text-sm font-semibold">Delete this project</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Removes every channel, message, file, task, and milestone for the whole team. This
+            cannot be undone.
+          </p>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="mt-3"
+            disabled={deleteProject.isPending}
+            onClick={() => {
+              if (
+                window.confirm(
+                  `Delete "${project?.name ?? "this project"}" and everything in it? This cannot be undone.`,
+                )
+              )
+                deleteProject.mutate();
+            }}
+          >
+            {deleteProject.isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Trash2 className="size-4" />
+            )}
+            Delete project
+          </Button>
+        </section>
+      ) : null}
     </main>
   );
 }
