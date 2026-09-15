@@ -51,7 +51,20 @@ export function initials(name: string | null | undefined, fallback = "?") {
   return parts.map((p) => p.charAt(0).toUpperCase()).join("");
 }
 
-export function displayName(profile: Pick<Profile, "full_name" | "email"> | null | undefined) {
+type NameFields = Partial<Pick<Profile, "username" | "full_name" | "email">>;
+
+/** Public-facing name: the chosen username wins, then real name, then email handle. */
+export function displayName(profile: NameFields | null | undefined) {
   if (!profile) return "Unknown member";
-  return profile.full_name?.trim() || profile.email?.split("@")[0] || "Unknown member";
+  return (
+    profile.username?.trim() ||
+    profile.full_name?.trim() ||
+    profile.email?.split("@")[0] ||
+    "Unknown member"
+  );
+}
+
+/** Real name on file — only shown to the project owner. */
+export function realName(profile: NameFields | null | undefined) {
+  return profile?.full_name?.trim() || profile?.email || "";
 }

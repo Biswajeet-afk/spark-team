@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createFileRoute, Link, Outlet, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Hash, KanbanSquare, Loader2, Plus, Target, Users } from "lucide-react";
+import { Hash, KanbanSquare, Loader2, Plus, Target, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { channelsQuery, membersQuery, projectQuery } from "@/lib/queries";
+import { channelsQuery, membersQuery, projectQuery, sessionUserQuery } from "@/lib/queries";
 import { useRealtime } from "@/hooks/use-realtime";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,9 @@ function ProjectLayout() {
   const { data: project } = useQuery(projectQuery(projectId));
   const { data: channels } = useQuery(channelsQuery(projectId));
   const { data: members } = useQuery(membersQuery(projectId));
+  const { data: user } = useQuery(sessionUserQuery);
+  const navigate = useNavigate();
+  const isOwner = !!project && !!user && project.owner_id === user.id;
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
@@ -56,6 +59,22 @@ function ProjectLayout() {
       setOpen(false);
       setChannelName("");
       await queryClient.invalidateQueries({ queryKey: ["channels", projectId] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const deleteChannel = useMutation({
+    mutationFn: async (channelId: string) => {
+      const { error } = await supabase.from("channels").delete().eq("id", channelId);
+      if (error) throw new Error(error.message);
+      return channelId;
+    },
+    onSuccess: async (channelId) => {
+      toast.success("Channel deleted");
+      await queryClient.invalidateQueries({ queryKey: ["channels", projectId] });
+      if (routeParams.channelId === channelId) {
+        navigate({ to: "/app/p/$projectId", params: { projectId } });
+      }
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -122,12 +141,12 @@ function ProjectLayout() {
             {(channels ?? []).map((channel) => {
               const active = routeParams.channelId === channel.id;
               return (
-                <li key={channel.id}>
+                <li key={channel.id} className="group/channel relative">
                   <Link
                     to="/app/p/$projectId/chat/$channelId"
                     params={{ projectId, channelId: channel.id }}
                     className={cn(
-                      "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+                      "flex items-center gap-1.5 rounded-md py-1.5 pr-7 pl-2 text-sm transition-colors",
                       active
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground",
@@ -136,6 +155,23 @@ function ProjectLayout() {
                     <Hash className="size-3.5 shrink-0" />
                     <span className="truncate">{channel.name}</span>
                   </Link>
+                  {isOwner ? (
+                    <button
+                      type="button"
+                      aria-label={`Delete channel ${channel.name}`}
+                      className="absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground opacity-0 transition-opacity group-hover/channel:opacity-100 hover:text-destructive"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Delete #${channel.name}? All its messages and files will be removed.`,
+                          )
+                        )
+                          deleteChannel.mutate(channel.id);
+                      }}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  ) : null}
                 </li>
               );
             })}
