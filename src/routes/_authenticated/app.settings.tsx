@@ -30,6 +30,7 @@ function ProfileSettings() {
   const { data: profile } = useQuery(myProfileQuery);
   const queryClient = useQueryClient();
   const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [discipline, setDiscipline] = useState<Discipline>("other");
@@ -38,24 +39,60 @@ function ProfileSettings() {
   useEffect(() => {
     if (!profile) return;
     setFullName(profile.full_name ?? "");
+    setUsername(profile.username ?? "");
     setBio(profile.bio ?? "");
     setAvatarUrl(profile.avatar_url ?? "");
     setDiscipline(profile.discipline);
   }, [profile]);
 
+  const uploadPhoto = useMutation({
+    mutationFn: async (file: File) => {
+      if (!profile) throw new Error("Profile not loaded");
+      if (!file.type.startsWith("image/")) throw new Error("Pick an image file.");
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const path = `${profile.id}/${crypto.randomUUID()}.${ext}`;
+      const upload = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { contentType: file.type, upsert: true });
+      if (upload.error) throw new Error(upload.error.message);
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (error || !data) throw new Error(error?.message ?? "Could not read the uploaded photo.");
+      const update = await supabase
+        .from("profiles")
+        .update({ avatar_url: data.signedUrl })
+        .eq("id", profile.id);
+      if (update.error) throw new Error(update.error.message);
+      return data.signedUrl;
+    },
+    onSuccess: async (url) => {
+      setAvatarUrl(url);
+      await queryClient.invalidateQueries();
+      toast.success("Profile photo updated");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const save = useMutation({
     mutationFn: async () => {
       if (!profile) throw new Error("Profile not loaded");
+      const cleanUsername = username.trim().replace(/\s+/g, "_");
       const { error } = await supabase
         .from("profiles")
         .update({
           full_name: fullName.trim(),
+          username: cleanUsername || null,
           bio: bio.trim() || null,
           avatar_url: avatarUrl.trim() || null,
           discipline,
         })
         .eq("id", profile.id);
-      if (error) throw new Error(error.message);
+      if (error) {
+        throw new Error(
+          error.code === "23505" ? "That username is already taken." : error.message,
+        );
+      }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries();
