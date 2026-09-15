@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createFileRoute, Link, Outlet, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Hash, KanbanSquare, Loader2, Plus, Target, Users } from "lucide-react";
+import { Hash, KanbanSquare, Loader2, Plus, Target, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { channelsQuery, membersQuery, projectQuery } from "@/lib/queries";
+import { channelsQuery, membersQuery, projectQuery, sessionUserQuery } from "@/lib/queries";
 import { useRealtime } from "@/hooks/use-realtime";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
