@@ -71,6 +71,7 @@ function ChatPage() {
   const { data: messages = [] } = useQuery(messagesQuery(channelId));
   const { data: attachments = [] } = useQuery(messageAttachmentsQuery(channelId));
   const { data: reactions = [] } = useQuery(messageReactionsQuery(channelId));
+  const { data: members = [] } = useQuery(membersQuery(projectId));
   const { data: auth } = useQuery({ queryKey: ["auth-user"], queryFn: async () => (await supabase.auth.getUser()).data.user });
 
   useRealtime(`chat-${channelId}`, [
@@ -133,6 +134,10 @@ function ChatPage() {
   });
 
   const attachmentsByMessage = useMemo(() => groupBy(attachments, (item) => item.message_id), [attachments]);
+  const roleByUser = useMemo(
+    () => new Map(members.map((member) => [member.user_id, member.position])),
+    [members],
+  );
 
   return (
     <main className="flex min-h-0 flex-1 flex-col">
@@ -154,6 +159,11 @@ function ChatPage() {
                 <div className="min-w-0 max-w-[85%]">
                   <div className="mb-1 flex items-baseline gap-2 text-xs text-muted-foreground">
                     <span className="font-medium text-foreground">{mine ? "You" : displayName(message.profile)}</span>
+                    {roleByUser.get(message.user_id) ? (
+                      <span className="rounded border border-primary/40 bg-primary/10 px-1.5 py-px text-[10px] font-medium tracking-wide text-primary">
+                        {roleByUser.get(message.user_id)}
+                      </span>
+                    ) : null}
                     <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time>
                   </div>
                   <MessageContent className={mine ? "bg-primary text-primary-foreground" : "bg-transparent p-0 text-foreground"}>
