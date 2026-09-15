@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Mail, UserMinus } from "lucide-react";
+import { Loader2, Mail, Trash2, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { membersQuery, projectQuery, sessionUserQuery } from "@/lib/queries";
 import { addMemberByEmail } from "@/lib/team.functions";
-import { displayName } from "@/lib/domain";
+import { displayName, realName } from "@/lib/domain";
 import { useRealtime } from "@/hooks/use-realtime";
 import { DisciplineBadge } from "@/components/app/discipline-badge";
 import { MemberAvatar } from "@/components/app/member-avatar";
