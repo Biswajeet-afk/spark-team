@@ -91,6 +91,35 @@ function TeamPage() {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const setRole = useMutation({
+    mutationFn: async ({ userId, position }: { userId: string; position: string }) => {
+      const { error } = await supabase
+        .from("project_members")
+        .update({ position: position.trim() || null })
+        .eq("project_id", projectId)
+        .eq("user_id", userId);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: async () => {
+      toast.success("Role updated");
+      await queryClient.invalidateQueries({ queryKey: ["members", projectId] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const deleteProject = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("projects").delete().eq("id", projectId);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: async () => {
+      toast.success("Project deleted");
+      await queryClient.invalidateQueries();
+      navigate({ to: "/app" });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   return (
     <main className="scroll-slim min-h-0 flex-1 overflow-y-auto p-6">
       <header className="mb-5">
