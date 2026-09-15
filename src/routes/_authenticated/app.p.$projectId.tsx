@@ -29,6 +29,9 @@ function ProjectLayout() {
   const { data: project } = useQuery(projectQuery(projectId));
   const { data: channels } = useQuery(channelsQuery(projectId));
   const { data: members } = useQuery(membersQuery(projectId));
+  const { data: user } = useQuery(sessionUserQuery);
+  const navigate = useNavigate();
+  const isOwner = !!project && !!user && project.owner_id === user.id;
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
@@ -56,6 +59,22 @@ function ProjectLayout() {
       setOpen(false);
       setChannelName("");
       await queryClient.invalidateQueries({ queryKey: ["channels", projectId] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const deleteChannel = useMutation({
+    mutationFn: async (channelId: string) => {
+      const { error } = await supabase.from("channels").delete().eq("id", channelId);
+      if (error) throw new Error(error.message);
+      return channelId;
+    },
+    onSuccess: async (channelId) => {
+      toast.success("Channel deleted");
+      await queryClient.invalidateQueries({ queryKey: ["channels", projectId] });
+      if (routeParams.channelId === channelId) {
+        navigate({ to: "/app/p/$projectId", params: { projectId } });
+      }
     },
     onError: (error: Error) => toast.error(error.message),
   });
