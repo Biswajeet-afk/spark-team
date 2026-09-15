@@ -7,7 +7,10 @@ export function MemberAvatar({
   className,
   online,
 }: {
-  profile: Pick<Profile, "full_name" | "email" | "avatar_url"> | null | undefined;
+  profile:
+    | (Pick<Profile, "full_name" | "email" | "avatar_url"> & { username?: string | null })
+    | null
+    | undefined;
   className?: string;
   online?: boolean;
 }) {
