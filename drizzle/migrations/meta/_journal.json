@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790852824548,
+      "tag": "0000_collab_power_features",
+      "breakpoints": true
+    }
+  ]
+}

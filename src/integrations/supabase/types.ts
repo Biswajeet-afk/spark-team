@@ -49,6 +49,61 @@ export type Database = {
           },
         ]
       }
+      decisions: {
+        Row: {
+          category: string
+          channel_id: string
+          created_at: string
+          id: string
+          locked_by: string | null
+          message_id: string
+          project_id: string
+          title: string | null
+        }
+        Insert: {
+          category?: string
+          channel_id: string
+          created_at?: string
+          id?: string
+          locked_by?: string | null
+          message_id: string
+          project_id: string
+          title?: string | null
+        }
+        Update: {
+          category?: string
+          channel_id?: string
+          created_at?: string
+          id?: string
+          locked_by?: string | null
+          message_id?: string
+          project_id?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decisions_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decisions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: true
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decisions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deliverables: {
         Row: {
           created_at: string
@@ -189,27 +244,45 @@ export type Database = {
       }
       messages: {
         Row: {
+          api_payload: Json | null
+          bot: string | null
           channel_id: string
           content: string
           created_at: string
+          decision_category: string | null
+          decision_title: string | null
           edited_at: string | null
           id: string
+          is_decision: boolean
+          locked_by: string | null
           user_id: string
         }
         Insert: {
+          api_payload?: Json | null
+          bot?: string | null
           channel_id: string
           content: string
           created_at?: string
+          decision_category?: string | null
+          decision_title?: string | null
           edited_at?: string | null
           id?: string
+          is_decision?: boolean
+          locked_by?: string | null
           user_id: string
         }
         Update: {
+          api_payload?: Json | null
+          bot?: string | null
           channel_id?: string
           content?: string
           created_at?: string
+          decision_category?: string | null
+          decision_title?: string | null
           edited_at?: string | null
           id?: string
+          is_decision?: boolean
+          locked_by?: string | null
           user_id?: string
         }
         Relationships: [
@@ -252,6 +325,47 @@ export type Database = {
             foreignKeyName: "milestones_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pitch_scripts: {
+        Row: {
+          id: string
+          project_id: string
+          qa_cards: Json
+          script_text: string
+          slides_url: string | null
+          timer_seconds: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          qa_cards?: Json
+          script_text?: string
+          slides_url?: string | null
+          timer_seconds?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          qa_cards?: Json
+          script_text?: string
+          slides_url?: string | null
+          timer_seconds?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_scripts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -425,6 +539,15 @@ export type Database = {
       is_project_owner: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
+      }
+      set_message_decision: {
+        Args: {
+          _category: string
+          _lock: boolean
+          _message_id: string
+          _title: string
+        }
+        Returns: undefined
       }
       shares_project: { Args: { _a: string; _b: string }; Returns: boolean }
     }
