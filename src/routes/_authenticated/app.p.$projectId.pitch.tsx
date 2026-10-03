@@ -160,7 +160,7 @@ function PitchPage() {
                 <Button size="sm" variant="outline" onClick={() => { setRunning(false); setLeft(seconds); scrollRef.current?.scrollTo({ top: 0 }); }}><RotateCcw className="size-3.5" /></Button>
               </div>
               <label className="block text-xs text-muted-foreground">Scroll speed</label>
-              <Slider value={[speed]} min={5} max={120} step={5} onValueChange={(v) => setSpeed(v[0])} />
+              <Slider value={[speed]} min={5} max={120} step={5} onValueChange={(v) => setSpeed(v[0] ?? 30)} />
               {editing ? (
                 <Input type="number" value={seconds} min={30} onChange={(e) => setSeconds(Number(e.target.value) || 180)} className="h-7 text-xs" aria-label="Timer seconds" />
               ) : null}

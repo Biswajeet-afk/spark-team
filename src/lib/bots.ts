@@ -26,5 +26,5 @@ export type BotName = keyof typeof BOTS;
 
 export function detectBot(text: string): BotName | null {
   const m = text.match(/@(circuit-bot|pitch-bot|api-bot)\b/i);
-  return m ? (m[1].toLowerCase() as BotName) : null;
+  return m?.[1] ? (m[1].toLowerCase() as BotName) : null;
 }

@@ -71,7 +71,7 @@ export function detectApiRequest(text: string): ApiRequest | null {
 /** Pull a JSON object/array from a message (raw or fenced). */
 export function extractJson(text: string): unknown | null {
   const fenced = text.match(/```(?:json)?\n([\s\S]*?)```/i);
-  const candidate = fenced ? fenced[1] : text.slice(text.search(/[[{]/));
+  const candidate = fenced?.[1] ?? text.slice(text.search(/[[{]/));
   try {
     return JSON.parse(candidate.trim());
   } catch {
