@@ -34,7 +34,7 @@ export function ApiSandboxCard({ request }: { request: ApiRequest }) {
       const res = await fetch(url, {
         method,
         headers: parsedHeaders,
-        body: method === "GET" || method === "DELETE" || !body ? undefined : body,
+        body: method === "GET" || method === "DELETE" || !body ? null : body,
       });
       const text = await res.text();
       let pretty = text;
@@ -65,7 +65,7 @@ export function ApiSandboxCard({ request }: { request: ApiRequest }) {
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
-            className={cn("rounded-md border px-2 font-mono text-xs font-semibold", METHOD_STYLE[method] ?? METHOD_STYLE.GET)}
+            className={cn("rounded-md border px-2 font-mono text-xs font-semibold", METHOD_STYLE[method] ?? METHOD_STYLE["GET"])}
           >
             {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
               <option key={m} value={m} className="bg-card text-foreground">{m}</option>

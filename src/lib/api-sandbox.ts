@@ -9,7 +9,7 @@ const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
 function stripFence(text: string) {
   const m = text.trim().match(/^```[a-z]*\n([\s\S]*?)\n?```$/i);
-  return (m ? m[1] : text).trim();
+  return (m?.[1] ?? text).trim();
 }
 
 function unquote(s: string) {
@@ -23,7 +23,7 @@ function tokens(cmd: string) {
   const out: string[] = [];
   const re = /'([^']*)'|"((?:\\.|[^"\\])*)"|(\S+)/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(cmd.replace(/\\\n/g, " ")))) out.push(m[1] ?? m[2]?.replace(/\\"/g, '"') ?? m[3]);
+  while ((m = re.exec(cmd.replace(/\\\n/g, " ")))) out.push(m[1] ?? m[2]?.replace(/\\"/g, '"') ?? m[3] ?? "");
   return out;
 }
 
@@ -33,7 +33,7 @@ export function parseCurl(text: string): ApiRequest | null {
   const t = tokens(src).slice(1);
   const req: ApiRequest = { method: "", url: "", headers: {}, body: "" };
   for (let i = 0; i < t.length; i++) {
-    const tok = t[i];
+    const tok = t[i] ?? "";
     if (tok === "-X" || tok === "--request") req.method = (t[++i] ?? "").toUpperCase();
     else if (tok === "-H" || tok === "--header") {
       const [k, ...v] = (t[++i] ?? "").split(":");
