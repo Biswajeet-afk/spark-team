@@ -80,7 +80,7 @@ export function SerialMonitor() {
     setConnected(false);
   }
 
-  const seriesKeys = points.length ? Object.keys(points[points.length - 1]).filter((k) => k !== "t") : [];
+  const seriesKeys = points.length ? Object.keys(points[points.length - 1] ?? {}).filter((k) => k !== "t") : [];
 
   return (
     <Sheet>
