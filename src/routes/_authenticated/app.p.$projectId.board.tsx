@@ -251,6 +251,8 @@ function BoardPage() {
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
+          <ContributionAnalytics projectId={projectId} />
+          <AiTaskGenerator projectId={projectId} />
           {(byStatus.get("done")?.length ?? 0) > 0 ? (
             <Button
               variant="ghost"

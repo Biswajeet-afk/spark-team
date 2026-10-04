@@ -18,6 +18,7 @@ import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppPProjectIdRouteImport } from './routes/_authenticated/app.p.$projectId'
 import { Route as AuthenticatedAppPProjectIdIndexRouteImport } from './routes/_authenticated/app.p.$projectId.index'
 import { Route as AuthenticatedAppPProjectIdBoardRouteImport } from './routes/_authenticated/app.p.$projectId.board'
+import { Route as AuthenticatedAppPProjectIdBomRouteImport } from './routes/_authenticated/app.p.$projectId.bom'
 import { Route as AuthenticatedAppPProjectIdMilestonesRouteImport } from './routes/_authenticated/app.p.$projectId.milestones'
 import { Route as AuthenticatedAppPProjectIdPitchRouteImport } from './routes/_authenticated/app.p.$projectId.pitch'
 import { Route as AuthenticatedAppPProjectIdTeamRouteImport } from './routes/_authenticated/app.p.$projectId.team'
@@ -71,6 +72,12 @@ const AuthenticatedAppPProjectIdBoardRoute =
     path: '/board',
     getParentRoute: () => AuthenticatedAppPProjectIdRoute,
   } as any)
+const AuthenticatedAppPProjectIdBomRoute =
+  AuthenticatedAppPProjectIdBomRouteImport.update({
+    id: '/bom',
+    path: '/bom',
+    getParentRoute: () => AuthenticatedAppPProjectIdRoute,
+  } as any)
 const AuthenticatedAppPProjectIdMilestonesRoute =
   AuthenticatedAppPProjectIdMilestonesRouteImport.update({
     id: '/milestones',
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
   '/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/app/p/$projectId/bom': typeof AuthenticatedAppPProjectIdBomRoute
   '/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
   '/app/p/$projectId/pitch': typeof AuthenticatedAppPProjectIdPitchRoute
   '/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
@@ -116,6 +124,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/app/p/$projectId/bom': typeof AuthenticatedAppPProjectIdBomRoute
   '/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
   '/app/p/$projectId/pitch': typeof AuthenticatedAppPProjectIdPitchRoute
   '/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
@@ -132,6 +141,7 @@ export interface FileRoutesById {
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/p/$projectId': typeof AuthenticatedAppPProjectIdRouteWithChildren
   '/_authenticated/app/p/$projectId/board': typeof AuthenticatedAppPProjectIdBoardRoute
+  '/_authenticated/app/p/$projectId/bom': typeof AuthenticatedAppPProjectIdBomRoute
   '/_authenticated/app/p/$projectId/milestones': typeof AuthenticatedAppPProjectIdMilestonesRoute
   '/_authenticated/app/p/$projectId/pitch': typeof AuthenticatedAppPProjectIdPitchRoute
   '/_authenticated/app/p/$projectId/team': typeof AuthenticatedAppPProjectIdTeamRoute
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/p/$projectId'
     | '/app/p/$projectId/board'
+    | '/app/p/$projectId/bom'
     | '/app/p/$projectId/milestones'
     | '/app/p/$projectId/pitch'
     | '/app/p/$projectId/team'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app'
     | '/app/p/$projectId/board'
+    | '/app/p/$projectId/bom'
     | '/app/p/$projectId/milestones'
     | '/app/p/$projectId/pitch'
     | '/app/p/$projectId/team'
@@ -175,6 +187,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/'
     | '/_authenticated/app/p/$projectId'
     | '/_authenticated/app/p/$projectId/board'
+    | '/_authenticated/app/p/$projectId/bom'
     | '/_authenticated/app/p/$projectId/milestones'
     | '/_authenticated/app/p/$projectId/pitch'
     | '/_authenticated/app/p/$projectId/team'
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPProjectIdBoardRouteImport
       parentRoute: typeof AuthenticatedAppPProjectIdRoute
     }
+    '/_authenticated/app/p/$projectId/bom': {
+      id: '/_authenticated/app/p/$projectId/bom'
+      path: '/bom'
+      fullPath: '/app/p/$projectId/bom'
+      preLoaderRoute: typeof AuthenticatedAppPProjectIdBomRouteImport
+      parentRoute: typeof AuthenticatedAppPProjectIdRoute
+    }
     '/_authenticated/app/p/$projectId/milestones': {
       id: '/_authenticated/app/p/$projectId/milestones'
       path: '/milestones'
@@ -286,6 +306,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppPProjectIdRouteChildren {
   AuthenticatedAppPProjectIdBoardRoute: typeof AuthenticatedAppPProjectIdBoardRoute
+  AuthenticatedAppPProjectIdBomRoute: typeof AuthenticatedAppPProjectIdBomRoute
   AuthenticatedAppPProjectIdMilestonesRoute: typeof AuthenticatedAppPProjectIdMilestonesRoute
   AuthenticatedAppPProjectIdPitchRoute: typeof AuthenticatedAppPProjectIdPitchRoute
   AuthenticatedAppPProjectIdTeamRoute: typeof AuthenticatedAppPProjectIdTeamRoute
@@ -296,6 +317,7 @@ interface AuthenticatedAppPProjectIdRouteChildren {
 const AuthenticatedAppPProjectIdRouteChildren: AuthenticatedAppPProjectIdRouteChildren =
   {
     AuthenticatedAppPProjectIdBoardRoute: AuthenticatedAppPProjectIdBoardRoute,
+    AuthenticatedAppPProjectIdBomRoute: AuthenticatedAppPProjectIdBomRoute,
     AuthenticatedAppPProjectIdMilestonesRoute:
       AuthenticatedAppPProjectIdMilestonesRoute,
     AuthenticatedAppPProjectIdPitchRoute: AuthenticatedAppPProjectIdPitchRoute,
