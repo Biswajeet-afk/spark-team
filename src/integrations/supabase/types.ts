@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      bom_items: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          power_ma: number
+          project_id: string
+          quantity: number
+          unit_cost: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          power_ma?: number
+          project_id: string
+          quantity?: number
+          unit_cost?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          power_ma?: number
+          project_id?: string
+          quantity?: number
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bom_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channels: {
         Row: {
           created_at: string
@@ -445,6 +486,7 @@ export type Database = {
       projects: {
         Row: {
           created_at: string
+          currency: string
           description: string | null
           id: string
           name: string
@@ -452,6 +494,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          currency?: string
           description?: string | null
           id?: string
           name: string
@@ -459,12 +502,45 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          currency?: string
           description?: string | null
           id?: string
           name?: string
           owner_id?: string
         }
         Relationships: []
+      }
+      share_links: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          project_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          project_id: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          project_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "share_links_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
