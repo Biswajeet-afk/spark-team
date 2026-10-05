@@ -68,9 +68,9 @@ function SharePage() {
         <h2 className="mb-3 text-sm font-semibold">Kanban status</h2>
         <div className="grid gap-3 md:grid-cols-4">
           {TASK_COLUMNS.map((c) => {
-            const list = d.tasks.filter((t) => t.status === c.id);
+            const list = d.tasks.filter((t) => t.status === c.status);
             return (
-              <div key={c.id} className="rounded-lg border border-border bg-card p-3">
+              <div key={c.status} className="rounded-lg border border-border bg-card p-3">
                 <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">{c.label} · {list.length}</p>
                 <ul className="space-y-1.5">
                   {list.map((t) => <li key={t.id} className="rounded border border-border bg-background px-2 py-1.5 text-xs">{t.title}<span className="ml-1 text-muted-foreground">· {t.priority}</span></li>)}

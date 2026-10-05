@@ -56,7 +56,7 @@ function BomPage() {
     onError: (e: Error) => toast.error(e.message),
   });
   const update = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, number | string> }) => {
+    mutationFn: async ({ id, patch }: { id: string; patch: { name?: string; unit_cost?: number; quantity?: number; power_ma?: number } }) => {
       const { error } = await supabase.from("bom_items").update(patch).eq("id", id);
       if (error) throw error;
     },
