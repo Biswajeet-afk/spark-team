@@ -45,6 +45,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MemberAvatar } from "@/components/app/member-avatar";
+import { AiTaskGenerator } from "@/components/app/ai-task-generator";
+import { ContributionAnalytics } from "@/components/app/contribution-analytics";
 
 export const Route = createFileRoute("/_authenticated/app/p/$projectId/board")({
   head: () => ({

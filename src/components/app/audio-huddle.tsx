@@ -8,7 +8,7 @@ type Signal =
   | { type: "desc"; from: string; to: string; desc: RTCSessionDescriptionInit }
   | { type: "ice"; from: string; to: string; candidate: RTCIceCandidateInit };
 
-type Peer = { pc: RTCPeerConnection; makingOffer: boolean; polite: boolean; screenSender?: RTCRtpSender };
+type Peer = { pc: RTCPeerConnection; makingOffer: boolean; polite: boolean; screenSender?: RTCRtpSender | undefined };
 
 const ICE: RTCConfiguration = { iceServers: [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }] };
 

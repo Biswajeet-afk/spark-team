@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Hash, KanbanSquare, Loader2, Plus, Target, Trash2, Users } from "lucide-react";
+import { Cpu, Hash, KanbanSquare, Loader2, Plus, Target, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { channelsQuery, membersQuery, projectQuery, sessionUserQuery } from "@/lib/queries";
@@ -82,6 +82,7 @@ function ProjectLayout() {
   const navItems = [
     { to: "/app/p/$projectId/board" as const, label: "Board", icon: KanbanSquare },
     { to: "/app/p/$projectId/milestones" as const, label: "Milestones", icon: Target },
+    { to: "/app/p/$projectId/bom" as const, label: "Project BOM", icon: Cpu },
     { to: "/app/p/$projectId/team" as const, label: "Team", icon: Users },
   ];
 
