@@ -33,6 +33,7 @@ import { MemberAvatar } from "@/components/app/member-avatar";
 import { ApiSandboxCard } from "@/components/app/api-sandbox-card";
 import { DecisionLog } from "@/components/app/decision-log";
 import { SerialMonitor } from "@/components/app/serial-monitor";
+import { AudioHuddle } from "@/components/app/audio-huddle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -197,6 +198,7 @@ function ChatPage() {
           <p className="truncate text-xs text-muted-foreground">{channel?.topic ?? "Project conversation"}</p>
         </div>
         {isHardware ? <SerialMonitor /> : null}
+        <AudioHuddle channelId={channelId} me={auth ? { id: auth.id, name: displayName(profileById.get(auth.id)) } : null} />
         <DecisionLog projectId={projectId} />
         <Button size="sm" variant="outline" className="h-7 gap-1.5 text-xs" asChild>
           <Link to="/app/p/$projectId/pitch" params={{ projectId }}><Rocket className="size-3.5 text-primary" /> Launch Pitch Mode</Link>

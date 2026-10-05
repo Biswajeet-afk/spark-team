@@ -13,6 +13,7 @@ import { DisciplineBadge } from "@/components/app/discipline-badge";
 import { MemberAvatar } from "@/components/app/member-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ShareLinkCard } from "@/components/app/share-link-card";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/_authenticated/app/p/$projectId/team")({
@@ -236,6 +237,8 @@ function TeamPage() {
           );
         })}
       </ul>
+
+      {isOwner ? <ShareLinkCard projectId={projectId} /> : null}
 
       {isOwner ? (
         <section className="mt-8 rounded-xl border border-destructive/40 bg-destructive/5 p-4">
