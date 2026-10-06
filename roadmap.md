@@ -9,3 +9,4 @@
 - [x] Chat interface check: message input, send, channel sidebar wired to realtime
 - [x] Verify a second real account signs in, sees channels and the same messages
 - [x] Decision locks + log, API sandbox, serial monitor, STL/PDF viewers, Pitch Mode, AI bots
+- [x] AI tasks from chat, Project BOM, contribution analytics, audio huddles, evaluator share link
