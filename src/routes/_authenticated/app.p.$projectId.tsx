@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { channelsQuery, membersQuery, projectQuery, sessionUserQuery } from "@/lib/queries";
 import { useRealtime } from "@/hooks/use-realtime";
+import { useHuddleIndex } from "@/hooks/use-huddle-index";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ function ProjectLayout() {
   const { data: members } = useQuery(membersQuery(projectId));
   const { data: user } = useQuery(sessionUserQuery);
   const navigate = useNavigate();
+  const huddleCounts = useHuddleIndex(projectId, user?.id);
   const isOwner = !!project && !!user && project.owner_id === user.id;
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -155,6 +157,11 @@ function ProjectLayout() {
                   >
                     <Hash className="size-3.5 shrink-0" />
                     <span className="truncate">{channel.name}</span>
+                    {huddleCounts[channel.id] ? (
+                      <span className="ml-auto flex shrink-0 items-center gap-1 rounded bg-success/15 px-1 font-mono text-[10px] text-success">
+                        <span className="size-1.5 animate-pulse rounded-full bg-success" />{huddleCounts[channel.id]} in call
+                      </span>
+                    ) : null}
                   </Link>
                   {isOwner ? (
                     <button

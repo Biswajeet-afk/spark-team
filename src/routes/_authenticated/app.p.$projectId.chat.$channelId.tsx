@@ -33,7 +33,7 @@ import { MemberAvatar } from "@/components/app/member-avatar";
 import { ApiSandboxCard } from "@/components/app/api-sandbox-card";
 import { DecisionLog } from "@/components/app/decision-log";
 import { SerialMonitor } from "@/components/app/serial-monitor";
-import { AudioHuddle } from "@/components/app/audio-huddle";
+import { AudioHuddle, type HuddleDetection } from "@/components/app/audio-huddle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,6 +96,7 @@ function ChatPage() {
   const { data: members = [] } = useQuery(membersQuery(projectId));
   const { data: auth } = useQuery({ queryKey: ["auth-user"], queryFn: async () => (await supabase.auth.getUser()).data.user });
   const [locking, setLocking] = useState<{ id: string; title: string; category: string } | null>(null);
+  const [detections, setDetections] = useState<HuddleDetection[]>([]);
   const [botThinking, setBotThinking] = useState<BotName | null>(null);
   const isHardware = /hardware|circuit/i.test(channel?.name ?? "");
 
@@ -186,6 +187,31 @@ function ChatPage() {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const dismissDetection = (id: string) => setDetections((list) => list.filter((d) => d.id !== id));
+  const detectionAction = useMutation({
+    mutationFn: async ({ d, kind }: { d: HuddleDetection; kind: "decision" | "task" }) => {
+      if (!auth) throw new Error("Sign in again.");
+      if (kind === "task") {
+        const { error } = await supabase.from("tasks").insert({ project_id: projectId, title: d.text.slice(0, 120), description: "From huddle transcript", status: "backlog", priority: "medium", created_by: auth.id, position: Date.now() });
+        if (error) throw error;
+        return "Task added to Backlog";
+      }
+      const { data: msg, error } = await supabase.from("messages").insert({ channel_id: channelId, user_id: auth.id, content: `🎙️ Huddle: ${d.text}` }).select("id").single();
+      if (error) throw error;
+      const lock = await supabase.rpc("set_message_decision", { _message_id: msg.id, _lock: true, _title: d.text.slice(0, 80), _category: "Huddle" });
+      if (lock.error) throw lock.error;
+      return "Locked as decision";
+    },
+    onSuccess: (m, v) => {
+      toast.success(m);
+      dismissDetection(v.d.id);
+      void queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
+      void queryClient.invalidateQueries({ queryKey: ["tasks", projectId] });
+      void queryClient.invalidateQueries({ queryKey: ["decisions", projectId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const attachmentsByMessage = useMemo(() => groupBy(attachments, (item) => item.message_id), [attachments]);
   const roleByUser = useMemo(() => new Map(members.map((member) => [member.user_id, member.position])), [members]);
   const profileById = useMemo(() => new Map(members.map((m) => [m.user_id, m.profile])), [members]);
@@ -198,7 +224,12 @@ function ChatPage() {
           <p className="truncate text-xs text-muted-foreground">{channel?.topic ?? "Project conversation"}</p>
         </div>
         {isHardware ? <SerialMonitor /> : null}
-        <AudioHuddle channelId={channelId} me={auth ? { id: auth.id, name: displayName(profileById.get(auth.id)) } : null} />
+        <AudioHuddle
+          channelId={channelId}
+          channelName={channel?.name ?? "channel"}
+          me={auth ? { id: auth.id, name: displayName(profileById.get(auth.id)), avatar: profileById.get(auth.id)?.avatar_url ?? null } : null}
+          onDetection={(d) => setDetections((list) => [...list.slice(-4), d])}
+        />
         <DecisionLog projectId={projectId} />
         <Button size="sm" variant="outline" className="h-7 gap-1.5 text-xs" asChild>
           <Link to="/app/p/$projectId/pitch" params={{ projectId }}><Rocket className="size-3.5 text-primary" /> Launch Pitch Mode</Link>
@@ -299,6 +330,17 @@ function ChatPage() {
               </Message>
             );
           })}
+          {detections.map((d) => (
+            <div key={d.id} className="my-2 rounded-lg border border-warning/40 border-l-2 border-l-warning bg-warning/5 p-3 text-sm">
+              <p className="font-mono text-[10px] tracking-widest text-warning uppercase">AI detected a potential decision · "{d.keyword}"</p>
+              <p className="mt-1">"{d.text}"</p>
+              <div className="mt-2 flex gap-2">
+                <Button size="sm" variant="outline" className="h-7 gap-1 text-xs" disabled={detectionAction.isPending} onClick={() => detectionAction.mutate({ d, kind: "decision" })}><ShieldCheck className="size-3.5" /> Lock as Decision</Button>
+                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={detectionAction.isPending} onClick={() => detectionAction.mutate({ d, kind: "task" })}>Add Task</Button>
+                <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => dismissDetection(d.id)}>Dismiss</Button>
+              </div>
+            </div>
+          ))}
           {botThinking ? (
             <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground">
               <BotAvatar bot={botThinking} /> {BOTS[botThinking].label} is thinking…
