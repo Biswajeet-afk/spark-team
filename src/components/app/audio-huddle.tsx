@@ -543,7 +543,7 @@ export function AudioHuddle({
         </div>
 
         <div className="scroll-slim mt-2 flex gap-2 overflow-x-auto pb-1">
-          {myStatus ? <Participant status={myStatus} stream={localStream} isMe deafened forceSpeaking={false} /> : null}
+          {myStatus ? <Participant status={myStatus} stream={localStream ?? undefined} isMe deafened forceSpeaking={false} /> : null}
           {others.map(([id, s]) => <Participant key={id} status={s} stream={media[id]?.audio} deafened={deafened} />)}
           {Object.entries(mocks).map(([id, s]) => <Participant key={id} status={s} forceSpeaking={!!mockSpeaking[id]} deafened={deafened} />)}
           {others.length === 0 && !Object.keys(mocks).length ? (
