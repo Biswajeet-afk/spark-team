@@ -10,3 +10,7 @@
 - [x] Verify a second real account signs in, sees channels and the same messages
 - [x] Decision locks + log, API sandbox, serial monitor, STL/PDF viewers, Pitch Mode, AI bots
 - [x] AI tasks from chat, Project BOM, contribution analytics, audio huddles, evaluator share link
+- [ ] Persistent countdown/progress header and live sidebar metrics
+- [ ] Huddle header avatars, decision filters/PDF export, profile previews and terminal code
+- [ ] Bot autocomplete and attachment/code/BOM menu
+- [ ] Verify enhanced chat interactions
